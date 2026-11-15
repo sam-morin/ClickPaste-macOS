@@ -10,8 +10,9 @@ cd "$(dirname "$0")"
 
 APP=build/ClickPaste.app
 rm -rf "$APP"
-mkdir -p "$APP/Contents/MacOS"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp Info.plist "$APP/Contents/Info.plist"
+cp Icon/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 
 swiftc -O -swift-version 5 \
   -target "$(uname -m)-apple-macos13.0" \

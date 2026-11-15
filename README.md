@@ -46,6 +46,8 @@ NOTARY_PROFILE=<profile> ./build.sh release   # signed, notarized build/ClickPas
 
 `release` signs with the first `Developer ID Application` identity in your keychain (override with `SIGN_ID`) and notarizes using a profile saved with `xcrun notarytool store-credentials`.
 
+The app icon is drawn by `Icon/make-icon.swift`. After editing it, run `swift Icon/make-icon.swift` to regenerate `Icon/AppIcon.icns` and `Icon/preview.png`.
+
 After rebuilding, macOS may revoke Accessibility access for the new binary. If so, remove ClickPaste from the Accessibility list and add it again.
 
 ## Installing a downloaded build
