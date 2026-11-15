@@ -32,6 +32,10 @@ enum Settings {
         get { d.object(forKey: "useScancodes") as? Bool ?? true }
         set { d.set(newValue, forKey: "useScancodes") }
     }
+    static var hideFromCapture: Bool {
+        get { d.object(forKey: "hideFromCapture") as? Bool ?? true }
+        set { d.set(newValue, forKey: "hideFromCapture") }
+    }
     static var persistHistory: Bool {
         get { d.object(forKey: "persistHistory") as? Bool ?? false }
         set { d.set(newValue, forKey: "persistHistory") }
@@ -482,7 +486,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             let paste = item(title, #selector(pasteHistoryItem(_:)), key: key)
             paste.keyEquivalentModifierMask = []
             paste.tag = i
-            paste.toolTip = text.count > 50 ? oneLine(text, max: 500) : nil
             menu.addItem(paste)
 
             // Shown in place of the item above while ⌥ is held.
@@ -497,6 +500,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(item("Click Target Window to Type Clipboard…", #selector(menuArm)))
         if !history.items.isEmpty {
             menu.addItem(item("Clear History", #selector(clearHistory)))
+        }
+    }
+
+    func menuWillOpen(_ menu: NSMenu) {
+        applyCaptureSharing()
+        // The menu window may not exist yet when this is called, so check again once it's on screen.
+        let t = Timer(timeInterval: 0, repeats: false) { [weak self] _ in self?.applyCaptureSharing() }
+        RunLoop.main.add(t, forMode: .eventTracking)
+    }
+
+    /// Menus show clipboard text, so keep them out of screen sharing and recordings unless turned off.
+    /// Set both ways because AppKit can reuse menu windows.
+    private func applyCaptureSharing() {
+        let type: NSWindow.SharingType = Settings.hideFromCapture ? .none : .readOnly
+        for w in NSApp.windows where w.isVisible && w !== statusItem.button?.window {
+            w.sharingType = type
         }
     }
 
@@ -563,6 +582,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(persist)
         menu.addItem(item("Clear History", #selector(clearHistory)))
 
+        let hide = item("Hide Menus From Screen Sharing", #selector(toggleHideFromCapture))
+        hide.state = Settings.hideFromCapture ? .on : .off
+        hide.toolTip = "Keeps ClickPaste menus out of screen sharing and recordings so clipboard text stays on your screen. Doesn't apply to mirrored or external displays."
+        menu.addItem(hide)
+
         let login = item("Launch at Login", #selector(toggleLogin))
         login.state = SMAppService.mainApp.status == .enabled ? .on : .off
         menu.addItem(login)
@@ -595,6 +619,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         arm(text: history.items[sender.tag])
     }
     @objc private func clearHistory() { history.clear() }
+    @objc private func toggleHideFromCapture() { Settings.hideFromCapture.toggle() }
     @objc private func togglePersistHistory() {
         Settings.persistHistory.toggle()
         history.save()

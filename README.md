@@ -26,6 +26,7 @@ Keystrokes are sent as real key codes mapped from the active keyboard layout, in
 - **Hotkey**: enables or disables `⌃⌥V`.
 - **Remember History After Quit**: saves history to the app's preferences. Off by default.
 - **Clear History**
+- **Hide Menus From Screen Sharing**: keeps ClickPaste's menus, and the clipboard text in them, out of screen sharing and recordings. On by default. Mirrored and external displays still show them.
 - **Launch at Login**
 
 ## Requirements
