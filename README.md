@@ -6,10 +6,15 @@ A menu bar utility that types the clipboard as keystrokes. Built for windows whe
 
 | Action | Result |
 | --- | --- |
-| Left-click the menu bar icon, then click a window | Types the clipboard into that window |
+| Left-click the menu bar icon | Shows clipboard history |
+| Click a history entry (or press `1`–`9`) | Pastes it into the app you were using |
+| `⌥`-click a history entry, then click a window | Types that entry into the window |
+| **Click Target Window to Type Clipboard…**, then click a window | Types the clipboard into that window |
 | `⌃⌥V` | Types the clipboard into the focused window |
 | `Esc` | Stops typing |
 | Right-click the menu bar icon | Settings and quit |
+
+History keeps the last 20 text clips. Clips that password managers mark as concealed or transient (1Password, Bitwarden and others, via [nspasteboard.org](http://nspasteboard.org) markers) are never recorded. History is kept in memory only unless **Remember History After Quit** is on.
 
 Keystrokes are sent as real key codes mapped from the active keyboard layout, including physical Shift and Option presses, so they are recognized by VMs and remote sessions.
 
@@ -19,6 +24,8 @@ Keystrokes are sent as real key codes mapped from the active keyboard layout, in
 - **Delay Before Typing**: 250 ms–3 s.
 - **Send Real Keypresses**: turn off to send Unicode text events (native Mac apps only).
 - **Hotkey**: enables or disables `⌃⌥V`.
+- **Remember History After Quit**: saves history to the app's preferences. Off by default.
+- **Clear History**
 - **Launch at Login**
 
 ## Requirements
